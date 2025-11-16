@@ -1,0 +1,11 @@
+{
+  "name": "yarnly-shop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Modern, classy yarn eCommerce with admin (no external packages)",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  }
+}
+

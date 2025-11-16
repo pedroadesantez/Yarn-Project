@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Wishlist — Yarnly</title>
+  <meta name="description" content="Your saved Yarnly items for later."/>
+  <meta property="og:title" content="Yarnly — Wishlist"/>
+  <meta property="og:description" content="Quickly access saved products."/>
+  <link rel="preload" as="style" href="/public/styles.css"/>
+  <link rel="canonical" href="/wishlist.html"/>
+  <meta property="og:image" content="/public/images/hero-yarn.svg"/>
+  <link rel="stylesheet" href="/public/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div><a class="brand" href="/">Yarnly</a></div>
+      <div class="actions"><a href="/shop.html">Shop</a> <a href="/cart.html">Cart</a></div>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Wishlist</h1>
+    <div id="list" class="grid"></div>
+  </main>
+  <script>
+    async function load(){
+      const me = await fetch('/api/auth/me').then(r=>r.ok?r.json():null);
+      if(!me){location.href='/login.html';return}
+      const prods = await fetch('/api/products').then(r=>r.json());
+      const items = (me.wishlist||[]).map(id=>prods.items.find(p=>p.id===id)).filter(Boolean);
+      document.getElementById('list').innerHTML = items.map(p=>`<a class="card" href="/product.html?id=${p.id}"><img src="${(p.images&&p.images[0])||'/public/images/placeholder.svg'}"><div class="pad"><div>${p.name}</div><div class="price">$${p.price.toFixed(2)}</div></div></a>`).join('')||'<div class="muted">No items yet.</div>';
+    }
+    load();
+  </script>
+</body>
+</html>

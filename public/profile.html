@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Your Profile — Yarnly</title>
+  <meta name="description" content="Manage your Yarnly account and shipping details."/>
+  <meta property="og:title" content="Yarnly — Profile"/>
+  <meta property="og:description" content="Update your account and preferences."/>
+  <link rel="preload" as="style" href="/public/styles.css"/>
+  <link rel="canonical" href="/profile.html"/>
+  <meta property="og:image" content="/public/images/hero-yarn.svg"/>
+  <link rel="stylesheet" href="/public/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div><a class="brand" href="/">Yarnly</a></div>
+    </div>
+  </header>
+  <main class="container" style="max-width:520px">
+    <h1>Your Profile</h1>
+    <div id="info" class="card"><div class="pad"></div></div>
+    <h2>Update</h2>
+    <div class="searchbar" style="flex-direction:column;gap:12px">
+      <input id="name" class="input" placeholder="Name"/>
+      <input id="address" class="input" placeholder="Shipping address"/>
+      <input id="password" class="input" placeholder="New password (optional)" type="password"/>
+      <button class="btn" id="save">Save</button>
+    </div>
+  </main>
+  <script type="module" src="/public/app.js"></script>
+  <script>
+    async function load(){
+      const r=await fetch('/api/auth/me'); if(!r.ok){location.href='/login.html';return}
+      const me=await r.json();
+      document.getElementById('info').querySelector('.pad').innerHTML=`<div><strong>${me.name}</strong> — ${me.email}</div><div class='muted'>Wishlist ${me.wishlist.length} · Cart ${me.cartCount}</div>`;
+      document.getElementById('name').value=me.name||'';
+      document.getElementById('address').value=me.profile?.address||'';
+    }
+    document.getElementById('save').onclick=async()=>{
+      const name=document.getElementById('name').value.trim();
+      const address=document.getElementById('address').value.trim();
+      const password=document.getElementById('password').value;
+      await fetch('/api/auth/profile',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,profile:{address},password:password||undefined})});
+      alert('Saved'); load();
+    }
+    load();
+  </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Your Orders — Yarnly</title>
+  <meta name="description" content="Track your Yarnly orders and statuses."/>
+  <meta property="og:title" content="Yarnly — Orders"/>
+  <meta property="og:description" content="View past orders and current status."/>
+  <link rel="preload" as="style" href="/public/styles.css"/>
+  <link rel="canonical" href="/orders.html"/>
+  <meta property="og:image" content="/public/images/hero-yarn.svg"/>
+  <link rel="stylesheet" href="/public/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="row"><div class="hamburger" id="hamburger"><span></span><span></span><span></span></div><a class="brand" href="/">Yarnly</a></div>
+      <div class="actions"><a class="btn-ghost" href="/shop.html">Shop</a></div>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Your Orders</h1>
+    <div id="orders"></div>
+  </main>
+  <script type="module" src="/public/app.js"></script>
+  <script>
+    async function load(){
+      const r = await fetch('/api/orders');
+      if(!r.ok){document.getElementById('orders').innerHTML='<div class="muted">Please <a href="/login.html">sign in</a>.</div>';return}
+      const data = await r.json();
+      const el = document.getElementById('orders');
+      el.innerHTML=(data.items||[]).map(o=>`<div class="card"><div class="pad row"><div><strong>#${o.id}</strong> — ${o.status} — $${o.totals.total.toFixed(2)}</div><div class="spacer"></div><button class="pill" data-view="${o.id}">View</button></div></div>`).join('')||'<div class="muted">No orders yet.</div>';
+      el.onclick = async (e)=>{
+        const id = Number(e.target?.dataset?.view); if(!id) return;
+        const ord = await fetch('/api/orders/'+id).then(r=>r.json());
+        openOrderModal(ord);
+      }
+    }
+    function ensureModal(){ let mb=document.querySelector('.modal-backdrop'); let modal=document.querySelector('.modal'); if(!mb){ mb=document.createElement('div'); mb.className='modal-backdrop'; document.body.appendChild(mb);} if(!modal){ modal=document.createElement('div'); modal.className='modal'; document.body.appendChild(modal);} mb.onclick=()=>{ mb.classList.remove('open'); modal.classList.remove('open'); }; return {mb,modal}; }
+    async function openOrderModal(o){
+      const {mb,modal}=ensureModal();
+      const prods = await fetch('/api/products').then(r=>r.json());
+      const map = new Map(prods.items.map(p=>[p.id,p]));
+      const itemsHtml = (o.items||[]).map(i=>{ const p=map.get(i.productId)||{name:'Unknown',price:0,images:['/public/images/placeholder.svg']}; return `<div class="line"><img src="${(p.images&&p.images[0])||'/public/images/placeholder.svg'}"><div class="grow"><div><strong>${p.name}</strong> <span class="muted">${i.variant||''}</span></div><div class="muted">Qty ${i.qty}</div></div><div>$${(p.price*i.qty).toFixed(2)}</div></div>`; }).join('');
+      const tl=(o.timeline||[]).slice().sort((a,b)=>a.at-b.at).map(t=>`<div class="muted">${new Date(t.at).toLocaleString()} — ${t.type==='payment'?'Payment':''} ${t.type==='status'?('Status: '+t.status):t.status} ${t.note?('— '+t.note):''}</div>`).join('');
+      modal.innerHTML=`<div class="panel"><div class="head"><strong>Order #${o.id}</strong><button class="pill" id="closeM">Close</button></div><div class="body"><div class="muted">Status: ${o.status} · Payment: ${o.payment?.status||'n/a'}</div><div class="muted">Total: $${o.totals.total.toFixed(2)}</div><hr style="border:none;border-top:1px solid #eee;margin:12px 0">${itemsHtml}<hr style="border:none;border-top:1px solid #eee;margin:12px 0"><div><strong>Timeline</strong></div>${tl||'<div class="muted">No events yet.</div>'}</div></div>`;
+      document.getElementById('closeM').onclick=()=>{ mb.classList.remove('open'); modal.classList.remove('open'); };
+      mb.classList.add('open'); modal.classList.add('open');
+    }
+    load();
+  </script>
+</body>
+</html>

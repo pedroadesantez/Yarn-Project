@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "name": "Soft Merino Wool",
+    "description": "Luxurious merino wool yarn for premium projects.",
+    "price": 9.99,
+    "stock": 42,
+    "category": "wool",
+    "colors": [
+      "cream",
+      "beige",
+      "pastel-pink",
+      "soft-blue"
+    ],
+    "weight": "DK",
+    "length": 100,
+    "images": [
+      "/public/images/placeholder.svg"
+    ],
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "Organic Cotton Blend",
+    "description": "Breathable, gentle cotton blend perfect for baby garments.",
+    "price": 7.49,
+    "stock": 68,
+    "category": "cotton",
+    "colors": [
+      "white",
+      "pastel-pink",
+      "soft-blue"
+    ],
+    "weight": "Worsted",
+    "length": 120,
+    "images": [
+      "/public/images/placeholder.svg"
+    ],
+    "active": true
+  },
+  {
+    "id": 3,
+    "name": "Everyday Acrylic",
+    "description": "Durable acrylic yarn in versatile tones.",
+    "price": 3.99,
+    "stock": 120,
+    "category": "acrylic",
+    "colors": [
+      "cream",
+      "beige",
+      "gray"
+    ],
+    "weight": "Aran",
+    "length": 90,
+    "images": [
+      "/public/images/placeholder.svg"
+    ],
+    "active": true
+  }
+]

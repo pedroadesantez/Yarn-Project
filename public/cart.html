@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Your Cart — Yarnly</title>
+  <meta name="description" content="Review your cart and checkout securely."/>
+  <meta property="og:title" content="Yarnly — Cart"/>
+  <meta property="og:description" content="View items and apply coupons."/>
+  <link rel="preload" as="style" href="/public/styles.css"/>
+  <link rel="canonical" href="/cart.html"/>
+  <meta property="og:image" content="/public/images/hero-yarn.svg"/>
+  <link rel="stylesheet" href="/public/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="row"><div class="hamburger" id="hamburger"><span></span><span></span><span></span></div><a class="brand" href="/">Yarnly</a></div>
+      <div class="actions"><a class="btn-ghost" href="/shop.html">Continue Shopping</a></div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav"><a href="/shop.html">Shop</a></div>
+  </header>
+  <main class="container">
+    <h1>Your Cart</h1>
+    <div id="cartItems"></div>
+    <div style="margin-top:16px">
+      <input id="coupon" placeholder="Coupon code" class="input"/>
+      <select id="method" class="input select"><option value="mock">Pay (Mock)</option><option value="stripe">Stripe</option><option value="paypal">PayPal</option><option value="mpesa">M-Pesa</option></select>
+      <button class="btn" id="checkout">Checkout</button>
+    </div>
+    <div id="totals" style="margin-top:16px"></div>
+  </main>
+  <script type="module" src="/public/app.js"></script>
+  <script src="/public/shop.js"></script>
+</body>
+</html>

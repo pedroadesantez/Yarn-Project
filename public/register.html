@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Create Account — Yarnly</title>
+  <link rel="stylesheet" href="/public/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div><a class="brand" href="/">Yarnly</a></div>
+    </div>
+  </header>
+  <main class="container" style="max-width:420px">
+    <h1>Create account</h1>
+    <div class="searchbar" style="flex-direction:column;gap:12px">
+      <input id="name" class="input" placeholder="Name"/>
+      <input id="email" class="input" placeholder="Email"/>
+      <input id="password" class="input" placeholder="Password" type="password"/>
+      <button class="btn" id="register">Sign Up</button>
+    </div>
+    <div class="muted" style="margin-top:8px">Have an account? <a href="/login.html">Sign in</a></div>
+  </main>
+  <script type="module" src="/public/app.js"></script>
+  <script>
+    document.getElementById('register').onclick = async () => {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const r = await fetch('/api/auth/register', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, email, password }) });
+      if (r.ok) location.href = '/login.html';
+      else alert('Registration failed');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "slug": "wool",
+    "name": "Wool"
+  },
+  {
+    "id": 2,
+    "slug": "cotton",
+    "name": "Cotton"
+  },
+  {
+    "id": 3,
+    "slug": "acrylic",
+    "name": "Acrylic"
+  },
+  {
+    "id": 4,
+    "slug": "accessories",
+    "name": "Accessories"
+  }
+]

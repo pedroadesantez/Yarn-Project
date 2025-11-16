@@ -1,0 +1,30 @@
+{
+  "port": 8080,
+  "sessionSecret": "change-me-in-prod-please",
+  "tokenTTLHours": 72,
+  "adminDefault": {
+    "email": "admin@yarnly.local",
+    "password": "Admin@123",
+    "name": "Site Admin"
+  },
+  "payments": {
+    "mode": "mock",
+    "stripe": {
+      "secretKey": "",
+      "publishableKey": ""
+    },
+    "paypal": {
+      "clientId": "",
+      "secret": ""
+    },
+    "mpesa": {
+      "consumerKey": "",
+      "consumerSecret": "",
+      "shortCode": ""
+    }
+  },
+  "inventory": {
+    "lowStockThreshold": 5
+  }
+}
+

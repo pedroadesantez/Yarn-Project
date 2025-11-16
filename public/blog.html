@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Blog — Yarnly</title>
+  <meta name="description" content="Tips, patterns, and stories from Yarnly."/>
+  <meta property="og:title" content="Yarnly — Blog"/>
+  <meta property="og:description" content="Read cozy yarn tips and maker stories."/>
+  <link rel="preload" as="style" href="/public/styles.css"/>
+  <link rel="canonical" href="/blog.html"/>
+  <meta property="og:image" content="/public/images/hero-yarn.svg"/>
+  <link rel="stylesheet" href="/public/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="row"><div class="hamburger" id="hamburger"><span></span><span></span><span></span></div><a class="brand" href="/">Yarnly</a></div>
+      <nav class="links hide-mobile"><a href="/shop.html">Shop</a></nav>
+      <div class="actions"><span id="account-link"><a href="/login.html">Sign In</a></span> <a class="btn-ghost btn-icon" href="/cart.html">Cart <span id="cart-count"></span></a></div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav"><a href="/shop.html">Shop</a></div>
+  </header>
+  <main class="container">
+    <h1>Blog</h1>
+    <div id="posts" class="grid"></div>
+  </main>
+  <script type="module" src="/public/app.js"></script>
+  <script>
+    fetch('/api/posts').then(r=>r.json()).then(({items})=>{
+      const el = document.getElementById('posts');
+      el.innerHTML = (items||[]).map(p=>`<article class="card"><div class="pad"><div class="muted">${new Date(p.createdAt||Date.now()).toDateString()}</div><h3>${p.title||'Untitled'}</h3><p class="muted">${p.excerpt||''}</p><div style="margin-top:8px"><a class="btn-ghost" href="/post.html?id=${p.id}">Read more</a></div></div></article>`).join('') || '<div class="muted">No posts yet.</div>';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Contact — Yarnly</title>
+  <meta name="description" content="Get in touch with Yarnly for support and inquiries."/>
+  <meta property="og:title" content="Yarnly — Contact"/>
+  <meta property="og:description" content="We’re here to help you with your projects."/>
+  <link rel="preload" as="style" href="/public/styles.css"/>
+  <link rel="canonical" href="/contact.html"/>
+  <meta property="og:image" content="/public/images/hero-yarn.svg"/>
+  <link rel="stylesheet" href="/public/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div><a class="brand" href="/">Yarnly</a></div>
+    </div>
+  </header>
+  <main class="container" style="max-width:640px">
+    <h1>Contact us</h1>
+    <div class="searchbar" style="flex-direction:column;gap:12px">
+      <input id="name" class="input" placeholder="Your name"/>
+      <input id="email" class="input" placeholder="Email"/>
+      <textarea id="message" class="input" placeholder="Message" style="min-height:120px"></textarea>
+      <button class="btn" id="send">Send</button>
+      <div class="muted" id="msg"></div>
+    </div>
+  </main>
+  <script>
+    document.getElementById('send').onclick = ()=>{
+      document.getElementById('msg').textContent='Thanks! We will reply shortly.';
+    }
+  </script>
+</body>
+</html>

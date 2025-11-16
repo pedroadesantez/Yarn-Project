@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin — Yarnly</title>
+  <link rel="stylesheet" href="/public/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div><a class="brand" href="/">Yarnly Admin</a></div>
+      <nav><a href="/admin.html">Dashboard</a></nav>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Dashboard</h1>
+    <section>
+      <div class="grid">
+        <div class="card"><div class="pad"><div>Revenue</div><div id="rev" class="price">$0.00</div></div></div>
+        <div class="card"><div class="pad"><div>Sales</div><div id="sales" class="price">0</div></div></div>
+      </div>
+    </section>
+    <section>
+      <div class="section-title"><h2>Low stock</h2></div>
+      <div id="lowstock" class="grid"></div>
+    </section>
+    <section>
+      <div class="section-title"><h2>Products</h2><button class="btn" id="newProd">New</button></div>
+      <div id="prods" class="grid"></div>
+    </section>
+    <section>
+      <div class="section-title"><h2>Orders</h2></div>
+      <div id="orders"></div>
+    </section>
+    <section>
+      <div class="section-title"><h2>Posts</h2><button class="pill" id="newPost">New Post</button></div>
+      <div id="posts"></div>
+    </section>
+    <section>
+      <div class="section-title"><h2>Settings</h2></div>
+      <div class="card"><div class="pad">
+        <label>Shipping Rate ($): <input id="shippingRate" class="input" style="width:140px"/></label>
+        <label class="pill">Payment Mode
+          <select id="paymentMode" class="input select"><option value="mock">Mock</option><option value="stripe">Stripe</option><option value="paypal">PayPal</option><option value="mpesa">M-Pesa</option></select>
+        </label>
+        <button class="btn" id="saveSettings">Save</button>
+      </div></div>
+    </section>
+  </main>
+  <script>
+    async function ensureAdmin(){
+      const me = await fetch('/api/auth/me').then(r=>r.ok?r.json():null);
+      if(!me || me.role!=='admin'){ location.href='/login.html'; }
+    }
+    async function load() {
+      await ensureAdmin();
+      const a = await fetch('/api/admin/analytics').then(r=>r.json());
+      document.getElementById('rev').textContent = `$${(a.revenue||0).toFixed(2)}`;
+      document.getElementById('sales').textContent = a.sales||0;
+      document.getElementById('lowstock').innerHTML = (a.lowStock||[]).map(p=>`<div class="card"><div class="pad">${p.name} — Stock ${p.stock}</div></div>`).join('') || '<div class="muted">All good.</div>';
+      const prods = await fetch('/api/products').then(r=>r.json());
+      document.getElementById('prods').innerHTML = prods.items.map(p=>`<div class="card"><div class="pad"><strong>${p.name}</strong><div class="muted">$${p.price.toFixed(2)} · Stock ${p.stock||0}</div><div style="margin-top:8px"><button data-id="${p.id}" class="pill edit">Edit</button> <button data-id="${p.id}" class="pill del">Delete</button></div></div></div>`).join('');
+      const orders = await fetch('/api/admin/orders').then(r=>r.json());
+      document.getElementById('orders').innerHTML = orders.items.map(o=>`<div class="card"><div class="pad row"><div><strong>#${o.id}</strong> — ${o.status} — $${o.totals.total.toFixed(2)}</div><div class="spacer"></div><button class="pill" data-view="${o.id}">View</button></div></div>`).join('');
+      const posts = await fetch('/api/admin/posts').then(r=>r.json());
+      document.getElementById('posts').innerHTML = posts.items.map(p=>`<div class="card"><div class="pad"><strong>${p.title||'Untitled'}</strong></div></div>`).join('');
+      document.querySelectorAll('.del').forEach(btn=>btn.onclick=async()=>{ await fetch('/api/admin/products/'+btn.dataset.id,{method:'DELETE'}); load(); });
+      document.querySelectorAll('.edit').forEach(btn=>btn.onclick=()=>editProduct(Number(btn.dataset.id)));
+      const s = await fetch('/api/admin/settings').then(r=>r.json());
+      document.getElementById('shippingRate').value = s.shippingRate ?? 6.99;
+      document.getElementById('paymentMode').value = s.paymentMode || 'mock';
+    }
+    async function uploadImage(){
+      return new Promise((resolve)=>{
+        const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.onchange=async()=>{
+          const f=inp.files[0]; const fr=new FileReader(); fr.onload=async()=>{
+            const res=await fetch('/api/admin/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:f.name,data:fr.result})}).then(r=>r.json()); resolve(res.path);
+          }; fr.readAsDataURL(f);
+        }; inp.click();
+      });
+    }
+    async function editProduct(id) {
+      const name = prompt('Name'); const price = Number(prompt('Price')); const stock = Number(prompt('Stock'));
+      const category = prompt('Category slug (wool, cotton, acrylic, accessories)');
+      let images = [];
+      if (confirm('Upload an image?')){ try{ const pth = await uploadImage(); images=[pth]; }catch(e){} }
+      const payload = { id, name, price, stock, category, images };
+      fetch('/api/admin/products', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }).then(()=>load());
+    }
+    document.getElementById('newProd').onclick = async ()=>{
+      const name = prompt('Name'); const price = Number(prompt('Price')); const stock = Number(prompt('Stock'));
+      const category = prompt('Category slug (wool, cotton, acrylic, accessories)');
+      const colors = (prompt('Colors (comma-separated)')||'').split(',').map(s=>s.trim()).filter(Boolean);
+      let images = [];
+      if (confirm('Upload an image?')){ try{ const pth = await uploadImage(); images=[pth]; }catch(e){} }
+      fetch('/api/admin/products', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, price, stock, category, colors, images }) }).then(()=>load());
+    }
+    document.getElementById('newPost').onclick = ()=>{
+      const title = prompt('Title'); const excerpt = prompt('Excerpt (shown in list)');
+      const content = prompt('Content (Markdown supported)');
+      fetch('/api/admin/posts', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ title, excerpt, content }) }).then(()=>load());
+    }
+    document.getElementById('saveSettings').onclick = ()=>{
+      const shippingRate = Number(document.getElementById('shippingRate').value);
+      const paymentMode = document.getElementById('paymentMode').value;
+      fetch('/api/admin/settings', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ shippingRate, paymentMode }) }).then(()=>load());
+    }
+    // Order detail modal bindings
+    function ensureModal(){
+      let mb = document.querySelector('.modal-backdrop');
+      let modal = document.querySelector('.modal');
+      if (!mb){ mb=document.createElement('div'); mb.className='modal-backdrop'; document.body.appendChild(mb); }
+      if (!modal){ modal=document.createElement('div'); modal.className='modal'; document.body.appendChild(modal); }
+      mb.onclick = ()=>{ document.querySelector('.modal-backdrop')?.classList.remove('open'); document.querySelector('.modal')?.classList.remove('open'); };
+      return { mb, modal };
+    }
+    async function openOrderModal(order){
+      const { mb, modal } = ensureModal();
+      const prods = await fetch('/api/products').then(r=>r.json());
+      const map = new Map(prods.items.map(p=>[p.id,p]));
+      const itemsHtml = (order.items||[]).map(i=>{
+        const p = map.get(i.productId)||{name:'Unknown', price:0, images:['/public/images/placeholder.svg']};
+        return `<div class="line"><img src="${(p.images&&p.images[0])||'/public/images/placeholder.svg'}"><div class="grow"><div><strong>${p.name}</strong> <span class="muted">${i.variant||''}</span></div><div class="muted">Qty ${i.qty}</div></div><div>$${(p.price*i.qty).toFixed(2)}</div></div>`;
+      }).join('');
+      const timeline = (order.timeline||[]).slice().sort((a,b)=>a.at-b.at).map(t=>`<div class=\"muted\">${new Date(t.at).toLocaleString()} — ${t.type==='payment'?'Payment':''} ${t.type==='status'?('Status: '+t.status):t.status} ${t.note?('— '+t.note):''}</div>`).join('');
+      modal.innerHTML = `<div class="panel"><div class="head"><strong>Order #${order.id}</strong><button class="pill" id="modalClose">Close</button></div><div class="body">
+        <div class="row" style="margin-bottom:8px"><div>Status: <strong>${order.status}</strong></div><div class="spacer"></div><label>Update status <select id="stSel" class="input select"><option>pending</option><option>processing</option><option>shipped</option><option>delivered</option><option>canceled</option></select></label><button class="btn" id="saveSt">Save</button></div>
+        <div class="muted">Payment: ${order.payment?.method||'n/a'} — ${order.payment?.status||'n/a'}</div>
+        <div class="muted">User: #${order.userId}</div>
+        <div class="muted">Total: $${order.totals?.total?.toFixed ? order.totals.total.toFixed(2) : order.totals.total}</div>
+        <hr style="border:none;border-top:1px solid #eee;margin:12px 0">
+        ${itemsHtml}
+        <hr style="border:none;border-top:1px solid #eee;margin:12px 0">
+        <div><strong>Timeline</strong></div>
+        ${timeline||'<div class="muted">No events yet.</div>'}
+      </div></div>`;
+      document.getElementById('modalClose').onclick = ()=>{ document.querySelector('.modal-backdrop')?.classList.remove('open'); document.querySelector('.modal')?.classList.remove('open'); };
+      const stSel = document.getElementById('stSel'); if (stSel) stSel.value = order.status;
+      document.getElementById('saveSt').onclick = async ()=>{
+        const status = stSel.value;
+        await fetch('/api/admin/orders/'+order.id, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ status }) });
+        document.querySelector('.modal-backdrop')?.classList.remove('open'); document.querySelector('.modal')?.classList.remove('open');
+        load();
+      };
+      mb.classList.add('open'); modal.classList.add('open');
+    }
+
+    // Delegate click for orders list
+    document.getElementById('orders').addEventListener('click', async (e)=>{
+      const id = Number(e.target?.dataset?.view);
+      if(!id) return;
+      const orders = await fetch('/api/admin/orders').then(r=>r.json());
+      const order = (orders.items||[]).find(o=>o.id===id);
+      if(order) openOrderModal(order);
+    });
+
+    load();
+  </script>
+</body>
+</html>

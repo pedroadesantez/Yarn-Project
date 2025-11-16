@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Yarnly — Soft, Elegant Yarns</title>
+    <meta name="description" content="Modern, classy yarn shop for merino, cotton, and accessories. Soft, warm palettes and a delightful shopping experience."/>
+    <meta property="og:title" content="Yarnly — Soft, Elegant Yarns"/>
+    <meta property="og:description" content="Cozy colors. Beautiful yarns. Lovely UX."/>
+    <link rel="preload" as="style" href="/public/styles.css"/>
+    <link rel="canonical" href="/"/>
+    <meta property="og:image" content="/public/images/hero-yarn.svg"/>
+    <link rel="stylesheet" href="/public/styles.css"/>
+  </head>
+  <body>
+    <header>
+      <div class="container nav">
+        <div class="row">
+          <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+          <a class="brand" href="/">Yarnly</a>
+        </div>
+        <nav class="links hide-mobile">
+          <a href="/shop.html">Shop</a>
+          <a href="/blog.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/faq.html">FAQs</a>
+          <a href="/contact.html">Contact</a>
+        </nav>
+        <div class="actions">
+          <span id="account-link"><a href="/login.html">Sign In</a></span>
+          <a class="btn-ghost btn-icon" href="/cart.html">Cart <span id="cart-count"></span></a>
+        </div>
+      </div>
+      <div id="mobile-nav" class="mobile-nav">
+        <a href="/shop.html">Shop</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/about.html">About</a>
+        <a href="/faq.html">FAQs</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container">
+          <span class="badge">New collection</span>
+          <h1>Beautiful yarns for cozy creations</h1>
+          <p>Carefully curated yarns in soft, warm tones — from luxurious merino to gentle cotton, with accessories to match.</p>
+          <a class="btn" href="/shop.html">Explore Bestsellers</a>
+        </div>
+        <div class="container">
+          <img src="/public/images/hero-yarn.svg" alt="Yarn skeins" style="width:100%;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08)"/>
+        </div>
+      </section>
+
+      <section>
+        <div class="container section-title">
+          <h2>Featured</h2>
+          <div>
+            <a class="pill" href="/shop.html?category=wool">Wool</a>
+            <a class="pill" href="/shop.html?category=cotton">Cotton</a>
+            <a class="pill" href="/shop.html?category=acrylic">Acrylic</a>
+          </div>
+        </div>
+        <div class="container">
+          <div id="featured" class="grid"></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="container section-title"><h2>Bestsellers</h2></div>
+        <div class="container">
+          <div id="bestsellers" class="grid"></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="container section-title"><h2>What makers say</h2></div>
+        <div class="container grid">
+          <div class="testimonial">“The merino is unbelievably soft — perfect stitch definition.”</div>
+          <div class="testimonial">“Love the palette. Shipping was quick and smooth.”</div>
+          <div class="testimonial">“My go-to shop for cotton baby knits.”</div>
+          <div class="testimonial">“Elegant site and excellent yarn selection.”</div>
+        </div>
+      </section>
+
+      <section>
+        <div class="container section-title"><h2>Join our newsletter</h2></div>
+        <div class="container" style="max-width:520px">
+          <div class="searchbar">
+            <input id="newsletter-email" class="input" placeholder="you@example.com"/>
+            <button class="btn" id="subscribe-btn">Subscribe</button>
+          </div>
+          <div id="newsletter-msg" class="muted" style="margin-top:8px"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div>© <span id="year"></span> Yarnly. All rights reserved.</div>
+      </div>
+    </footer>
+
+    <script type="module" src="/public/app.js"></script>
+    <script src="/public/shop.js"></script>
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+      const elF = document.getElementById('featured');
+      const elB = document.getElementById('bestsellers');
+      fetch('/api/products').then(r=>r.json()).then(data=>{
+        const items = data.items.slice(0,4);
+        elF.innerHTML = items.map(p=>`<a class="card" href="/product.html?id=${p.id}"><img src="${(p.images&&p.images[0])||'/public/images/placeholder.svg'}" alt="${p.name}"><div class="pad"><div>${p.name}</div><div class="price">$${p.price.toFixed(2)}</div></div></a>`).join('');
+        elB.innerHTML = data.items.slice(1,5).map(p=>`<a class="card" href="/product.html?id=${p.id}"><img src="${(p.images&&p.images[0])||'/public/images/placeholder.svg'}" alt="${p.name}"><div class="pad"><div>${p.name}</div><div class="price">$${p.price.toFixed(2)}</div></div></a>`).join('');
+      });
+      document.getElementById('subscribe-btn').onclick = ()=>{
+        const email = document.getElementById('newsletter-email').value.trim();
+        document.getElementById('newsletter-msg').textContent = email? 'Thanks for subscribing!' : 'Please enter a valid email.';
+      }
+    </script>
+  </body>
+  </html>

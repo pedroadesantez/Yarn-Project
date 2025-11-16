@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Shop — Yarnly</title>
+  <meta name="description" content="Browse yarns by type, color, weight, and price."/>
+  <meta property="og:title" content="Yarnly — Shop"/>
+  <meta property="og:description" content="Filter cozy yarns by color, weight, and more."/>
+  <link rel="preload" as="style" href="/public/styles.css"/>
+  <link rel="canonical" href="/shop.html"/>
+  <meta property="og:image" content="/public/images/hero-yarn.svg"/>
+  <meta name="description" content="Browse yarns by type, color, weight, length and price."/>
+  <link rel="stylesheet" href="/public/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="row"><div class="hamburger" id="hamburger"><span></span><span></span><span></span></div><a class="brand" href="/">Yarnly</a></div>
+      <nav class="links hide-mobile"><a href="/shop.html">Shop</a><a href="/blog.html">Blog</a><a href="/about.html">About</a></nav>
+      <div class="actions"><span id="account-link"><a href="/login.html">Sign In</a></span> <a class="btn-ghost btn-icon" href="/cart.html">Cart <span id="cart-count"></span></a></div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav"><a href="/shop.html">Shop</a><a href="/blog.html">Blog</a><a href="/about.html">About</a></div>
+  </header>
+  <main class="container">
+    <h1>Shop</h1>
+    <div class="shop-layout">
+      <aside class="filters">
+        <details open>
+          <summary>Search</summary>
+          <div class="content"><input id="q" class="input" placeholder="Search yarns"/></div>
+        </details>
+        <details open>
+          <summary>Category</summary>
+          <div class="content"><select id="category" class="input select"><option value="">All categories</option></select></div>
+        </details>
+        <details open>
+          <summary>Color</summary>
+          <div class="content"><select id="color" class="input select"><option value="">Any</option><option>cream</option><option>beige</option><option>pastel-pink</option><option>soft-blue</option><option>gray</option><option>white</option></select></div>
+        </details>
+        <details open>
+          <summary>Weight</summary>
+          <div class="content"><select id="weight" class="input select"><option value="">Any</option><option>DK</option><option>Worsted</option><option>Aran</option></select></div>
+        </details>
+        <details open>
+          <summary>Price</summary>
+          <div class="content"><div class="row"><input id="minPrice" class="input" type="number" placeholder="Min $" style="width:110px"/><input id="maxPrice" class="input" type="number" placeholder="Max $" style="width:110px"/></div></div>
+        </details>
+        <button class="btn" id="apply">Apply</button>
+      </aside>
+      <section>
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div class="chips" id="chips"></div>
+          <div>
+            <label class="muted" for="sort">Sort</label>
+            <select id="sort" class="input select">
+              <option value="popular">Popular</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="newest">Newest</option>
+            </select>
+          </div>
+        </div>
+        <div id="results" class="grid" style="margin-top:16px"></div>
+        <div class="center" style="margin:16px 0"><button class="btn" id="loadMore">Load more</button></div>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="/public/app.js"></script>
+  <script src="/public/shop.js"></script>
+</body>
+</html>
