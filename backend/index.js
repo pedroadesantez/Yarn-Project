@@ -53,6 +53,19 @@ function serveStatic(req, res, pathname) {
 }
 
 const server = http.createServer(async (req, res) => {
+  // CORS headers for frontend on localhost:3000
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Handle preflight OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   const { path: pathname, parts, query } = urlInfo(req);
   const cookies = parseCookies(req);
   const session = getSession(cookies.sid);
@@ -135,7 +148,7 @@ bootstrapAdmin();
 const port = Number(process.env.PORT || config.port);
 server.listen(port, () => {
   const actual = server.address().port;
-  console.log(`Yarn shop server running on http://localhost:${actual}`);
+  console.log('Backend API server started');
   try {
     const runtime = { port: actual, startedAt: Date.now() };
     fs.writeFileSync(path.join(__dirname, 'runtime.json'), JSON.stringify(runtime, null, 2));
