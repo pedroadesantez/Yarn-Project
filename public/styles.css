@@ -19,6 +19,16 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;font-family:Poppins,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto;color:var(--text);background:var(--white)}
 
+/* Global link styling */
+a{color:var(--text);text-decoration:none}
+a:visited{color:var(--text)}
+a:hover{opacity:.9}
+a:focus-visible{outline:none;box-shadow:var(--ring);border-radius:6px}
+
+/* Inline link utility for content areas */
+.link{color:var(--accent-ink);text-decoration:underline;text-decoration-color:#e2d8cd;text-underline-offset:3px}
+.link:hover{color:var(--accent-ink);text-decoration-color:var(--accent)}
+
 .hide{display:none !important}
 .row{display:flex;gap:var(--gap);align-items:center}
 .spacer{flex:1}
@@ -55,10 +65,12 @@ header{position:sticky;top:0;background:rgba(255,255,255,.85);backdrop-filter:sa
 
 /* Cards & Grid */
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
-.card{border:1px solid #eee;border-radius:var(--radius);overflow:hidden;background:var(--white);box-shadow:var(--shadow);transition:transform .12s ease,border-color .2s ease}
+.card{border:1px solid #eee;border-radius:var(--radius);overflow:hidden;background:var(--white);box-shadow:var(--shadow);transition:transform .12s ease,border-color .2s ease;color:var(--text);text-decoration:none}
 .card:hover{transform:translateY(-3px);border-color:#e2d8cd}
 .card img{width:100%;aspect-ratio:4/3;object-fit:cover}
 .card .pad{padding:12px}
+.card .title{font-weight:600}
+.card:hover .title{color:var(--accent-ink)}
 .price{font-weight:700}
 .muted{color:var(--muted)}
 .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #e9e3dc;border-radius:999px;padding:6px 10px;background:#fff}
@@ -74,7 +86,7 @@ section{padding:36px 0}
 footer{margin-top:56px;background:linear-gradient(180deg,var(--beige),#f3ece4);padding:28px 0;color:#4a3f35;border-top:1px solid #e7dbcf}
 
 /* Pills, Inputs */
-.pill{border:1px solid #e9e3dc;border-radius:999px;padding:7px 12px;margin:0 6px;background:linear-gradient(180deg,#fff,rgba(255,255,255,.9));cursor:pointer}
+.pill{border:1px solid #e9e3dc;border-radius:999px;padding:7px 12px;margin:0 6px;background:linear-gradient(180deg,#fff,rgba(255,255,255,.9));cursor:pointer;color:var(--text);text-decoration:none}
 .searchbar{display:flex;flex-wrap:wrap;gap:8px;background:linear-gradient(180deg,#fff,rgba(255,255,255,.95));padding:10px;border:1px solid #eee;border-radius:14px;box-shadow:var(--shadow)}
 .input, .searchbar input, .searchbar select, .searchbar textarea{border:1px solid #e9e3dc;outline:none;background:#fff;border-radius:10px;padding:10px 12px;transition:box-shadow .15s ease,border-color .15s ease}
 .input:focus, .searchbar input:focus, .searchbar select:focus, .searchbar textarea:focus{border-color:var(--accent);box-shadow:var(--ring)}

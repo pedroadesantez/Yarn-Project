@@ -110,8 +110,8 @@
       const elB = document.getElementById('bestsellers');
       fetch('/api/products').then(r=>r.json()).then(data=>{
         const items = data.items.slice(0,4);
-        elF.innerHTML = items.map(p=>`<a class="card" href="/product.html?id=${p.id}"><img src="${(p.images&&p.images[0])||'/public/images/placeholder.svg'}" alt="${p.name}"><div class="pad"><div>${p.name}</div><div class="price">$${p.price.toFixed(2)}</div></div></a>`).join('');
-        elB.innerHTML = data.items.slice(1,5).map(p=>`<a class="card" href="/product.html?id=${p.id}"><img src="${(p.images&&p.images[0])||'/public/images/placeholder.svg'}" alt="${p.name}"><div class="pad"><div>${p.name}</div><div class="price">$${p.price.toFixed(2)}</div></div></a>`).join('');
+        elF.innerHTML = items.map(p=>`<a class="card" href="/product.html?id=${p.id}"><img src="${(p.images&&p.images[0])||'/public/images/placeholder.svg'}" alt="${p.name}"><div class="pad"><div class="title">${p.name}</div><div class="price">$${p.price.toFixed(2)}</div></div></a>`).join('');
+        elB.innerHTML = data.items.slice(1,5).map(p=>`<a class="card" href="/product.html?id=${p.id}"><img src="${(p.images&&p.images[0])||'/public/images/placeholder.svg'}" alt="${p.name}"><div class="pad"><div class="title">${p.name}</div><div class="price">$${p.price.toFixed(2)}</div></div></a>`).join('');
       });
       document.getElementById('subscribe-btn').onclick = ()=>{
         const email = document.getElementById('newsletter-email').value.trim();
